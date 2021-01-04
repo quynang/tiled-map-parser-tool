@@ -2,7 +2,7 @@
 
 This is a tool for GAME-UIT project.
 
-It use to parse custom info needed from file *.tmx(File was created from Tiled-Map application).
+It can genatate object's info from file *.tmx (File was created from Tiled-Map application).
 
 ### Script
 ```
