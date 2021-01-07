@@ -40,19 +40,17 @@ const parseCells = (data) => {
 
 const writeCellInfoToFile = (cells) => {
   
-  cells.forEach((cell) => {
-
-    (function () {
-
-      const stringline = `${cell.index_x}\t${cell.index_y}\t${cell.object_ids.join('\t')}\n`
-
+  cells.forEach((cell, index) => {
+    const stringline = `${cell.index_x}\t${cell.index_y}\t${cell.object_ids.join('\t')}\n`
+    setTimeout(() => {
       fs.appendFile(OUT_PUT_FILE_NAME, stringline , function (err) {
         if (err) return console.log(err);
         console.log('Appended!');
-      })
-    })();
+      }) 
+    }, index*100);
+    
+  });
 
-  })
 }
 
 const getCellIndex = (x, y, data) => {
