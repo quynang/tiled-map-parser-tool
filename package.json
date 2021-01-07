@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node --presets es2015 index.js $FILE_NAME $CELL_SIZE",
+    "migrate-ground": "babel-node --presets es2015 ./src/GroundGenerator.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "nang",
