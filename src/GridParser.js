@@ -5,7 +5,7 @@ const parser = new xml2js.Parser();
 const CELL_SIZE = process.env.CELL_SIZE
 const INPUT_FILE_NAME = process.env.FILE_NAME
 
-const OUT_PUT_FILE_NAME = 'output.txt'
+const OUT_PUT_FILE_NAME = 'grid.txt'
 
 const calcCellX = (x) => {
   const cellX =  Math.floor(x / process.env.CELL_SIZE);
@@ -39,9 +39,14 @@ const parseCells = (data) => {
 }
 
 const writeCellInfoToFile = (cells) => {
-  
+  fs.appendFile(OUT_PUT_FILE_NAME, '[CELLS]\n', function (err) {
+    if (err) return console.log(err);
+    console.log('Appended!');
+  })
+
   cells.forEach((cell, index) => {
-    const stringline = `${cell.index_x}\t${cell.index_y}\t${cell.object_ids.join('\t')}\n`
+    const object_ids = cell.object_ids.length ? '\t' + cell.object_ids.join('\t') : ''
+    const stringline = cell.index_x + '\t' + cell.index_y + object_ids + '\n'
     setTimeout(() => {
       fs.appendFile(OUT_PUT_FILE_NAME, stringline , function (err) {
         if (err) return console.log(err);
@@ -68,6 +73,18 @@ const getCellIndex = (x, y, data) => {
   return y * numCellX + x
 }
 
+const writeGridInfoToFile = (data) => {
+  const mapWidth =  data.map['$'].width * data.map['$'].tilewidth
+  const mapHeight = data.map['$'].height * data.map['$'].tileheight
+  const numCellX = Math.floor(mapWidth/CELL_SIZE)
+  const numCellY = Math.floor(mapHeight/CELL_SIZE)
+  const string = `[INFO]\n` + numCellX + '\t' + numCellY + '\t' + CELL_SIZE + '\n'
+  fs.appendFile(OUT_PUT_FILE_NAME, string, function (err) {
+    if (err) return console.log(err);
+    console.log('Appended!');
+  }) 
+}
+
 export default function parseGridData() {
   fs.readFile(INPUT_FILE_NAME, function(err, data) {
 
@@ -76,14 +93,27 @@ export default function parseGridData() {
     parser.parseString(data, function (err, result) {
   
       if (err) return console.log(err);
-      
+
+      writeGridInfoToFile(result)
+
       const objects = result.map.objectgroup[0].object
       const cells = parseCells(result)
 
       objects.forEach((object) => {
         (function () {
-          const cellIndex = getCellIndex(calcCellX(object['$'].x), calcCellY(object['$'].y), result)
-          cells[cellIndex].object_ids.push(object['$'].id)
+    
+          const { id, x, y, gid, height } = object['$']
+
+          let y_on_codebase = y - height
+
+          //For those objects which was create by inserting Reactangle. Y is different from object was created by inserting image. 
+          if(!gid) {
+            y_on_codebase = y
+          }
+
+          const cellIndex = getCellIndex(calcCellX(x), calcCellY(y_on_codebase), result)
+          cells[cellIndex].object_ids.push(id)
+
         })();
 
       })
