@@ -8,6 +8,7 @@ const OUT_PUT_FILE_NAME = 'objects.txt'
 
 const OBJECT_TYPE_BIG_BOX_GID = 100
 const OBJECT_TYPE_PIPE_GID = 101
+const OBJECT_TYPE_PIPE_EXIT_GID = 102
 
 
 // 'OBJECT_TYPE_BIG_BOX',
@@ -56,6 +57,7 @@ export default function parseObjects() {
           {
             case 'bigbox': object_type_id = OBJECT_TYPE_BIG_BOX_GID; break;
             case 'pipe': object_type_id = OBJECT_TYPE_PIPE_GID; break;
+            case 'pipe_exit': object_type_id = OBJECT_TYPE_PIPE_EXIT_GID; break;
           }
         }
 
